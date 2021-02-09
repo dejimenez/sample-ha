@@ -1,15 +1,16 @@
-import dotenv from 'dotenv';
 import { default as express } from 'express';
-import { startWebControllers } from './common';
+
+import { LOGGER_SERVICE, startWebControllers, get } from './common';
+import { LoggerService } from './common';
 import './app';
 
-dotenv.config();
+const port = process.env.PORT;
+const logger: LoggerService = get(LOGGER_SERVICE);
 
 const app = express();
-
-const port = process.env.PORT;
 app.use(express.json());
 app.use('*', startWebControllers());
+
 app.listen(port, () => {
-  console.log(`listening on port: ${port}`);
+  logger.info(`listening on port: ${port}`);
 });

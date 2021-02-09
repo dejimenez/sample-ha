@@ -1,13 +1,12 @@
-import { inject, injectable } from 'inversify';
-import 'reflect-metadata';
+import { Inject, Injectable } from '../../../common';
 import { USER_REPOSITORY } from '../constants';
 import { User } from '../domain/user';
 import { UserRepository } from '../domain/user.repository';
 
-@injectable()
+@Injectable()
 export class UserService {
   constructor(
-    @inject(USER_REPOSITORY) private readonly userRepository: UserRepository
+    @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository
   ) {}
 
   list(): Promise<User[]> {

@@ -1,9 +1,8 @@
-import { injectable } from 'inversify';
-import 'reflect-metadata';
+import { Injectable } from '../../../common';
 import { User } from '../domain/user';
 import { UserRepository } from '../domain/user.repository';
 
-@injectable()
+@Injectable()
 export class InMemoryUserRepository implements UserRepository {
   private users: User[] = [];
   private id: number = 1;

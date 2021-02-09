@@ -18,9 +18,6 @@ export class UserController {
 
   @Post()
   create(@Body() newUser: UserDto): Promise<User> {
-    console.log(this.userService);
     return this.userService.create(newUser);
   }
 }
-
-// @Body @Param @query

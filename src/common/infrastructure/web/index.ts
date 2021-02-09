@@ -1,19 +1,17 @@
-import { LOGGER_SERVICE } from '../../constants';
-import { LoggerService } from '../../service/logger.service';
-import { get } from '../di';
-import { container } from '../di/container';
-import { controllers } from '../di/controller.decorator';
-import { HttpError } from './http.error';
-
 import { Request, Response } from 'express';
 
-export { Get } from './routing';
+import { LOGGER_SERVICE } from '../../constants';
+import { LoggerService } from '../../service/logger.service';
+import { get, controllers } from '../di';
+import { HttpError } from './errors/http.error';
+
+export { Get, Post, Put, Delete } from './decorators/routing.decorator';
 
 const routePath = (path: string) => (path.startsWith('/') ? path : `/${path}`);
 
 const getControllerHandlers = () => {
   return controllers.reduce((handlers: any[], controller: string) => {
-    const controllerObj: any = container.get(controller);
+    const controllerObj: any = get(controller);
     const routes = Reflect.getMetadata('web:routes', controllerObj);
     if (!routes) return handlers;
 
@@ -25,6 +23,11 @@ const getControllerHandlers = () => {
         ...route,
         path: `/${controllerPath}${routePath(route.path)}`,
         handler: controllerObj[route.handler].bind(controllerObj),
+        paramtypes: Reflect.getMetadata(
+          'design:paramtypes',
+          controllerObj,
+          route.handler
+        ),
       })),
     ];
   }, []);
@@ -36,14 +39,11 @@ const findHandler = (controllerHandlers: any[], method: string, path: string) =>
   );
 
 export const startWebControllers = () => {
-  console.log('startWebControllers');
   const controllerHandlers = getControllerHandlers();
   return (req: Request, res: Response) => {
-    // console.log(req);
     const url = req.originalUrl && req.originalUrl.toLowerCase();
     const path = url?.endsWith('/') ? url : `${url}/`;
     const method = req.method?.toLowerCase() || 'get';
-    console.log('request incoming', url, path, method);
 
     const handler = findHandler(controllerHandlers, method, path);
 

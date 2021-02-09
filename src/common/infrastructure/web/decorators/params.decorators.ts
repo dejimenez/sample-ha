@@ -4,11 +4,11 @@ export const Body = (key: string = ''): ParameterDecorator => {
     propertyKey: string | symbol,
     parameterIndex: number
   ) => {
-    console.log(target, propertyKey, parameterIndex);
     Reflect.defineMetadata(
       'body:param',
-      { propertyKey, parameterIndex, key },
-      target
+      { position: 'body', parameterIndex, key },
+      target,
+      propertyKey
     );
   };
 };
